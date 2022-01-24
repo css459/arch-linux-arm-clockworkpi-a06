@@ -256,11 +256,11 @@ in place of theirs.
 
 3. Inside fdisk,
 
-   1. Type **o**. This will clear out any partitions on the drive
-   2. Type **p** to list partitions. There should be no partitions left
-   3. Type **n**, then **p** for primary, **1** for the first partition on the drive, **32768** for the first sector
-   4. Press ENTER to accept the default last sector
-   5. Write the partition table and exit by typing **w**
+    1. Type **o**. This will clear out any partitions on the drive
+    2. Type **p** to list partitions. There should be no partitions left
+    3. Type **n**, then **p** for primary, **1** for the first partition on the drive, **32768** for the first sector
+    4. Press ENTER to accept the default last sector
+    5. Write the partition table and exit by typing **w**
 
 4. Create the **ext4** filesystem **without a Journal**
 
@@ -286,8 +286,8 @@ in place of theirs.
 
 ```
 # cd /mnt/boot
-
-TODO
+# dd if=rksd_loader.img of=/dev/sdX seek=64 conv=notrunc
+# dd if=u-boot.itb of=/dev/sdX seek=16384 conv=notrunc
 ```
 
 8. Unmount and eject the SD card

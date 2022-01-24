@@ -1,0 +1,63 @@
+# U-Boot: ClockworkPi DevTerm A06
+# Maintainer: Cole Smith <cole.s.smith1@gmail.com>
+
+buildarch=8
+
+pkgname=uboot-clockworkpi-a06
+pkgver=2020.07
+pkgrel=1
+pkgdesc="U-Boot for ClockworkPi DevTerm A06"
+arch=('aarch64')
+url='http://www.denx.de/wiki/U-Boot/WebHome'
+license=('GPL')
+backup=('boot/boot.txt' 'boot/boot.scr')
+makedepends=('bc' 'git' 'python' 'swig' 'dtc' 'uboot-tools')
+install=${pkgname}.install
+source=("ftp://ftp.denx.de/pub/u-boot/u-boot-${pkgver}.tar.bz2"
+        "https://github.com/ARM-software/arm-trusted-firmware/archive/v2.3.tar.gz"
+	'0001-uboot-clockworkpi-a06.patch'
+        'boot.txt'
+        'mkscr')
+md5sums=('86e51eeccd15e658ad1df943a0edf622'
+         '06ad72bdf63b922a3f3865d81f5d9ad2'
+         '132a87d2da4d72f74220d9a2836f165c'
+         '1aef526a884be9c365166ca1b1b30a7b'
+         '021623a04afd29ac3f368977140cfbfd')
+
+prepare() {
+  cd ${srcdir}/arm-trusted-firmware-2.3
+  make PLAT=rk3399 all
+
+  cd ${srcdir}/u-boot-${pkgver}
+  cp ../arm-trusted-firmware-2.3/build/rk3399/release/bl31/bl31.elf ./bl31.elf
+
+  # Apply cpi a06 patch
+  patch -Np1 -i "${srcdir}/0001-uboot-clockworkpi-a06.patch"
+
+  cd ${srcdir}/u-boot-${pkgver}/configs
+  echo 'CONFIG_IDENT_STRING=" Arch Linux ARM"' >> clockworkpi-a06-rk3399_defconfig
+}
+
+build() {
+  cd ${srcdir}/u-boot-${pkgver}
+
+  unset CLFAGS CXXFLAGS CPPFLAGS LDFLAGS
+
+  make clockworkpi-a06-rk3399_defconfig
+  make EXTRAVERSION=-${pkgrel}
+  make EXTRAVERSION=-${pkgrel} u-boot.itb
+}
+
+package() {
+  cd u-boot-${pkgver}
+
+  mkdir -p "${pkgdir}/boot"
+
+  tools/mkimage -n rk3399 -T rksd -d ./tpl/u-boot-tpl.bin "${pkgdir}/boot/rksd_loader.img"
+  cat ./spl/u-boot-spl.bin >> "${pkgdir}/boot/rksd_loader.img"
+
+  cp ./u-boot.itb "${pkgdir}/boot/u-boot.itb"
+
+  tools/mkimage -A arm -O linux -T script -C none -n "U-Boot boot script" -d ../boot.txt "${pkgdir}/boot/boot.scr"
+  cp ../{boot.txt,mkscr} "${pkgdir}"/boot
+}
