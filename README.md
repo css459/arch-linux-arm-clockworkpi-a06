@@ -301,3 +301,11 @@ in place of theirs.
 ## Done!
 
 The SD card is now ready to be booted by the DevTerm! Good luck!
+
+# Acknowledgements
+
+Very special thanks to **Max Fierke (@maxfierke)** from the Manjaro team for their help in debugging and kernel patching. 
+The Linux kernel port in this repository uses their carefully designed patches, in place of the ones from ClockworkPi.
+
+For more information about their kernel for the A06, [see here](https://gitlab.manjaro.org/manjaro-arm/packages/core/linux-clockworkpi-a06).
+
