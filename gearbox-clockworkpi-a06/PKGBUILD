@@ -1,7 +1,7 @@
 # ClockworkPi DevTerm A06 Gearbox
 # Maintainer: Cole Smith <cole.s.smith1@gmail.com>
 
-pkgname=clockwork-a06-gearbox
+pkgname=gearbox-clockwork-a06
 pkgver=1.0
 pkgrel=1
 pkgdesc="ClockworkPi DevTerm A06 Gearbox"
