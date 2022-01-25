@@ -89,7 +89,7 @@ For this section, **all commands will be run inside the chroot**.
 1. Install some useful tools
 
 ```
-# pacman -S git vim wget ranger sudo
+# pacman -S git vim wget ranger sudo iwd man
 ```
 
 2. Set the Locale by editing `/etc/locale.gen` and uncommenting your required locales.
