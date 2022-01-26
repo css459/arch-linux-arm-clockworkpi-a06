@@ -16,7 +16,15 @@ the rk3399.
 ## Quickstart
 
 Pre-built root filesystem(s) are provided in the **Releases** tab. Skip to the **Prepare the SD Card** section if using
-a pre-built image. Replace `arch-linux-clockworkpi-a06-root-fs.tar.xz` with your downloaded file name in the guide steps.
+a pre-built image. Replace `arch-linux-clockworkpi-a06-root-fs.tar.xz` with your downloaded file name in the guide
+steps.
+
+**NOTE:** Please note the following defaults for the release filesystem:
+
+* Root password: `root`
+* Timezone: `UTC`
+* Locale: `en_US UTF8`
+* Hostname: `devterm`
 
 # Setup
 
@@ -108,6 +116,31 @@ For this section, **all commands will be run inside the chroot**.
 
 ```
 # echo 'LABEL=ROOT_ARCH    /    ext4    defaults    0    0' >> /etc/fstab
+```
+
+5. Set the time using `timedatectl`. To list supported timezones: `timedatectl list-timezones`
+
+```
+# timedatectl set-timezone "US/Eastern"
+# timedatectl set-ntp true
+```
+
+6. Set the system clock
+
+```
+# `hwclock --systohc`
+```
+
+7. Set the hostname to whatever you like
+
+```
+# echo 'devterm' > /etc/hostname
+```
+
+8. Assign the root password
+
+```
+# passwd
 ```
 
 ### Switch to the `alarm` user
@@ -206,7 +239,13 @@ prepare the SD card.
 
 ### Compiling Additional Packages
 
-TODO
+For each additional package directory in this repository
+
+```
+$ cd <package directory> 
+$ MAKEFLAGS="-j$(nproc)" makepkg -si 
+$ cd ..
+```
 
 ### Exit the chroot
 
