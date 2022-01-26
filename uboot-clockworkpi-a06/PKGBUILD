@@ -1,63 +1,71 @@
-# U-Boot: ClockworkPi DevTerm A06
-# Maintainer: Cole Smith <cole.s.smith1@gmail.com>
-
-buildarch=8
+# U-Boot: ClockworkPI A06 based on PKGBUILD for RockPro64
+# Maintainer: Dan Johansen <strit@manjaro.org>
+# Contributor: Max Fierke <max@maxfierke.com>
+# Contributor: Michael Gollnick
+# Contributor: Kevin Mihelich
+# Contributor: Adam <adam900710@gmail.com>
 
 pkgname=uboot-clockworkpi-a06
-pkgver=2020.07
-pkgrel=1
-pkgdesc="U-Boot for ClockworkPi DevTerm A06"
+pkgver=2021.10
+pkgrel=3
+_tfaver=2.6
+pkgdesc="U-Boot for ClockworkPI A06"
 arch=('aarch64')
 url='http://www.denx.de/wiki/U-Boot/WebHome'
 license=('GPL')
-backup=('boot/boot.txt' 'boot/boot.scr')
-makedepends=('bc' 'git' 'python' 'swig' 'dtc' 'uboot-tools')
+makedepends=('git' 'dtc' 'bc')
+provides=('uboot')
+conflicts=('uboot')
 install=${pkgname}.install
-source=("ftp://ftp.denx.de/pub/u-boot/u-boot-${pkgver}.tar.bz2"
-        "https://github.com/ARM-software/arm-trusted-firmware/archive/v2.3.tar.gz"
-        '0001-uboot-clockworkpi-a06.patch'
-        'boot.txt'
-        'mkscr')
-md5sums=('86e51eeccd15e658ad1df943a0edf622'
-        '06ad72bdf63b922a3f3865d81f5d9ad2'
-        '132a87d2da4d72f74220d9a2836f165c'
-        '1aef526a884be9c365166ca1b1b30a7b'
-        '021623a04afd29ac3f368977140cfbfd')
+source=("https://ftp.denx.de/pub/u-boot/u-boot-${pkgver/rc/-rc}.tar.bz2"
+        "https://git.trustedfirmware.org/TF-A/trusted-firmware-a.git/snapshot/trusted-firmware-a-$_tfaver.tar.gz"
+        "0001-uboot-clockworkpi-a06.patch")
+sha256sums=('cde723e19262e646f2670d25e5ec4b1b368490de950d4e26275a988c36df0bd4'
+            '4e59f02ccb042d5d18c89c849701b96e6cf4b788709564405354b5d313d173f7'
+            '64fe6b045a5379a6562b28884c66523b45cc51c1cc093a50a0b98ec5c091769b')
 
 prepare() {
-    cd ${srcdir}/arm-trusted-firmware-2.3
-    make PLAT=rk3399 all
-
-    cd ${srcdir}/u-boot-${pkgver}
-    cp ../arm-trusted-firmware-2.3/build/rk3399/release/bl31/bl31.elf ./bl31.elf
-
-    # Apply cpi a06 patch
-    patch -Np1 -i "${srcdir}/0001-uboot-clockworkpi-a06.patch"
-
-    cd ${srcdir}/u-boot-${pkgver}/configs
-    echo 'CONFIG_IDENT_STRING=" Arch Linux ARM"' >> clockworkpi-a06-rk3399_defconfig
+  cd u-boot-${pkgver/rc/-rc}
+  patch -Np1 -i "${srcdir}/0001-uboot-clockworkpi-a06.patch"
 }
 
 build() {
-    cd ${srcdir}/u-boot-${pkgver}
+  # Avoid build warnings by editing a .config option in place instead of
+  # appending an option to .config, if an option is already present
+  update_config() {
+    if ! grep -q "^$1=$2$" .config; then
+      if grep -q "^# $1 is not set$" .config; then
+        sed -i -e "s/^# $1 is not set$/$1=$2/g" .config
+      elif grep -q "^$1=" .config; then
+        sed -i -e "s/^$1=.*/$1=$2/g" .config
+      else
+        echo "$1=$2" >> .config
+      fi
+    fi
+  }
 
-    unset CLFAGS CXXFLAGS CPPFLAGS LDFLAGS
+  unset CFLAGS CXXFLAGS CPPFLAGS LDFLAGS
 
-    make clockworkpi-a06-rk3399_defconfig
-    make EXTRAVERSION=-${pkgrel}
-    make EXTRAVERSION=-${pkgrel} u-boot.itb
+  cd trusted-firmware-a-$_tfaver
+
+  echo -e "\nBuilding TF-A for ClockworkPI A06...\n"
+  make PLAT=rk3399
+  cp build/rk3399/release/bl31/bl31.elf ../u-boot-${pkgver/rc/-rc}
+
+  cd ../u-boot-${pkgver/rc/-rc}
+
+  echo -e "\nBuilding U-Boot for ClockworkPI A06...\n"
+  make clockworkpi-a06-rk3399_defconfig
+
+  update_config 'CONFIG_IDENT_STRING' '" Arch Linux ARM"'
+  update_config 'CONFIG_OF_LIBFDT_OVERLAY' 'y'
+  make EXTRAVERSION=-${pkgrel}
 }
 
 package() {
-    cd u-boot-${pkgver}
+  cd u-boot-${pkgver/rc/-rc}
 
-    mkdir -p "${pkgdir}/boot"
+  mkdir -p "${pkgdir}/boot/extlinux"
 
-    tools/mkimage -n rk3399 -T rksd -d ./tpl/u-boot-tpl.bin "${pkgdir}/boot/rksd_loader.img"
-    cat ./spl/u-boot-spl.bin >> "${pkgdir}/boot/rksd_loader.img"
-
-    cp ./u-boot.itb "${pkgdir}/boot/u-boot.itb"
-
-    tools/mkimage -A arm -O linux -T script -C none -n "U-Boot boot script" -d ../boot.txt "${pkgdir}/boot/boot.scr"
-    cp ../{boot.txt,mkscr} "${pkgdir}"/boot
+  install -D -m 0644 idbloader.img u-boot.itb -t "${pkgdir}/boot"
 }

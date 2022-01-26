@@ -1,8 +1,8 @@
 diff --git a/arch/arm/dts/Makefile b/arch/arm/dts/Makefile
-index f8f52943..a56b820a 100644
+index fc16a57e..8729c8e2 100644
 --- a/arch/arm/dts/Makefile
 +++ b/arch/arm/dts/Makefile
-@@ -119,6 +119,7 @@ dtb-$(CONFIG_ROCKCHIP_RK3368) += \
+@@ -121,6 +121,7 @@ dtb-$(CONFIG_ROCKCHIP_RK3368) += \
  	rk3368-px5-evb.dtb \
  
  dtb-$(CONFIG_ROCKCHIP_RK3399) += \
@@ -10,12 +10,42 @@ index f8f52943..a56b820a 100644
  	rk3399-evb.dtb \
  	rk3399-ficus.dtb \
  	rk3399-firefly.dtb \
+diff --git a/arch/arm/dts/rk3399-clockworkpi-a06-u-boot.dtsi b/arch/arm/dts/rk3399-clockworkpi-a06-u-boot.dtsi
+new file mode 100644
+index 00000000..495573e0
+--- /dev/null
++++ b/arch/arm/dts/rk3399-clockworkpi-a06-u-boot.dtsi
+@@ -0,0 +1,24 @@
++// SPDX-License-Identifier: GPL-2.0+
++
++#include "rk3399-u-boot.dtsi"
++#include "rk3399-sdram-lpddr4-100.dtsi"
++
++/ {
++	chosen {
++		stdout-path = "serial2:1500000n8";
++		u-boot,spl-boot-order = "same-as-spl", &sdhci, &sdmmc;
++	};
++};
++
++&i2c0 {
++	u-boot,dm-pre-reloc;
++};
++
++&rk808 {
++	u-boot,dm-pre-reloc;
++};
++
++&sdmmc {
++	u-boot,dm-pre-reloc;
++};
++
 diff --git a/arch/arm/dts/rk3399-clockworkpi-a06.dts b/arch/arm/dts/rk3399-clockworkpi-a06.dts
 new file mode 100644
-index 00000000..9717c1c7
+index 00000000..8357d05f
 --- /dev/null
 +++ b/arch/arm/dts/rk3399-clockworkpi-a06.dts
-@@ -0,0 +1,165 @@
+@@ -0,0 +1,163 @@
 +/*
 + * (C) Copyright 2016 Rockchip Electronics Co., Ltd
 + *
@@ -140,7 +170,6 @@ index 00000000..9717c1c7
 +	clock-frequency = <400000>;
 +	i2c-scl-falling-time-ns = <50>;
 +	i2c-scl-rising-time-ns = <100>;
-+	u-boot,dm-pre-reloc;
 +
 +	rk808: pmic@1b {
 +		compatible = "rockchip,rk808";
@@ -152,7 +181,6 @@ index 00000000..9717c1c7
 +		reg = <0x1b>;
 +		rockchip,system-power-controller;
 +		#clock-cells = <1>;
-+		u-boot,dm-pre-reloc;
 +		status = "okay";
 +
 +		vcc12-supply = <&vcc3v3_sys>;
@@ -183,10 +211,10 @@ index 00000000..9717c1c7
 +
 diff --git a/configs/clockworkpi-a06-rk3399_defconfig b/configs/clockworkpi-a06-rk3399_defconfig
 new file mode 100644
-index 00000000..d2003073
+index 00000000..826139c1
 --- /dev/null
 +++ b/configs/clockworkpi-a06-rk3399_defconfig
-@@ -0,0 +1,53 @@
+@@ -0,0 +1,54 @@
 +CONFIG_ARM=y
 +CONFIG_ARCH_ROCKCHIP=y
 +CONFIG_SYS_TEXT_BASE=0x00200000
@@ -225,6 +253,7 @@ index 00000000..d2003073
 +CONFIG_PMIC_RK8XX=y
 +CONFIG_REGULATOR_RK8XX=y
 +CONFIG_RAM_RK3399_LPDDR4=y
++CONFIG_RAM_ROCKCHIP_DEBUG=y
 +CONFIG_BAUDRATE=1500000
 +CONFIG_DEBUG_UART_SHIFT=2
 +CONFIG_SYSRESET=y
@@ -240,4 +269,3 @@ index 00000000..d2003073
 +CONFIG_DISPLAY_ROCKCHIP_HDMI=y
 +CONFIG_SPL_TINY_MEMSET=y
 +CONFIG_ERRNO_STR=y
-

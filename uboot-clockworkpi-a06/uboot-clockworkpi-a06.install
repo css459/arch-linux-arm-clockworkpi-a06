@@ -1,25 +1,39 @@
-flash_uboot() {
-  echo "A new U-Boot version needs to be flashed onto /dev/mmcblk0."
-  echo "Do you want to do this now? [y|N]"
-  read -r shouldwe
-  if [[ $shouldwe =~ ^([yY][eE][sS]|[yY])$ ]]; then
-    dd if=/boot/rksd_loader.img of=/dev/mmcblk0 seek=64 conv=notrunc
-    dd if=/boot/u-boot.itb of=/dev/mmcblk0 seek=16384 conv=notrunc
+notice_uboot() {
+  echo "New version of U-Boot firmware can be flashed to your microSD card (mmcblk1)"
+  echo "or eMMC module (mmcblk2).  You can do that by running:"
+  echo "# dd if=/boot/idbloader.img of=/dev/mmcblkX seek=64 conv=notrunc,fsync"
+  echo "# dd if=/boot/u-boot.itb of=/dev/mmcblkX seek=16384 conv=notrunc,fsync"
+}
+
+create_config() {
+  mkdir -p /boot/extlinux
+  echo "LABEL Arch ARM
+KERNEL /boot/Image
+FDT /boot/dtbs/rockchip/rk3399-clockworkpi-a06.dtb
+APPEND initrd=/boot/initramfs-linux.img console=ttyS2,1500000 root=LABEL=ROOT_ARCH rw rootwait audit=0" \
+    > /boot/extlinux/extlinux.conf
+}
+
+post_install() {
+  notice_uboot
+  if [ -f /boot/extlinux/extlinux.conf.pacsave ]; then
+    mv /boot/extlinux/extlinux.conf.pacsave /boot/extlinux/extlinux.conf
+  fi
+  if [ -f /boot/extlinux/extlinux.conf ]; then
+    echo "Keeping old extlinux.conf file..."
   else
-    echo "You can do this later by running:"
-    echo "# dd if=/boot/rksd_loader.img of=/dev/mmcblk0 seek=64 conv=notrunc"
-    echo "# dd if=/boot/u-boot.itb of=/dev/mmcblk0 seek=16384 conv=notrunc"
-    echo "# if you are using the emmc interface, take care to use the correct device identifier! (probably mmcblk1)"
+    create_config
   fi
 }
 
-## arg 1:  the new package version
-post_install() {
-  flash_uboot
-}
-
-## arg 1:  the new package version
-## arg 2:  the old package version
 post_upgrade() {
-  flash_uboot
+  notice_uboot
+  if [ -f /boot/extlinux/extlinux.conf.pacsave ]; then
+    mv /boot/extlinux/extlinux.conf.pacsave /boot/extlinux/extlinux.conf
+  fi
+  if [ -f /boot/extlinux/extlinux.conf ]; then
+    echo "Keeping old extlinux.conf file..."
+  else
+    create_config
+  fi
 }
