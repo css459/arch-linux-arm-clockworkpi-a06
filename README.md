@@ -99,6 +99,12 @@ For this section, **all commands will be run inside the chroot**.
 # locale-gen
 ```
 
+4. Set `fstab`
+
+```
+# echo 'LABEL=ROOT_ARCH	/	ext4	defaults	0	0' >> /etc/fstab
+```
+
 ### Switch to the `alarm` user
 
 1. We can avoid working with the root account by granting `alarm`, the default Arch Linux ARM user, `sudo` privileges.
