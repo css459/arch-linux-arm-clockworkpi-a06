@@ -1,35 +1,30 @@
-# AArch64 ClockworkPi DevTerm A06
-# Maintainer: Cole Smith <cole.s.smith1@gmail.com>
-
-buildarch=8
+# ClockworkPI A06 (based on linux)
+# Maintainer: Dan Johansen <strit@manjaro.org>
+# Contributor: Max Fierke <max@maxfierke.com>
+# Contributor: Kevin Mihelich <kevin@archlinuxarm.org>
 
 pkgbase=linux-clockworkpi-a06
 _srcname=linux-5.16
 _kernelname=${pkgbase#linux}
-_desc="AArch64 ClockworkPi DevTerm A06"
+_desc="Kernel for ClockworkPI A06"
 pkgver=5.16.2
-pkgrel=2
+pkgrel=3
 arch=('aarch64')
 url="http://www.kernel.org/"
 license=('GPL2')
-makedepends=('xmlto' 'docbook-xsl' 'kmod' 'inetutils' 'bc' 'git' 'uboot-tools' 'vboot-utils' 'dtc' 'cpio')
+makedepends=('xmlto' 'docbook-xsl' 'kmod' 'inetutils' 'bc' 'git' 'dtc')
 options=('!strip')
 source=("http://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
         "http://www.kernel.org/pub/linux/kernel/v5.x/patch-${pkgver}.xz"
-
-	# Patch files from Manjaro Release:
-	# https://gitlab.manjaro.org/manjaro-arm/packages/core/linux-clockworkpi-a06
         '0001-net-smsc95xx-Allow-mac-address-to-be-set-as-a-parame.patch'
-        '0023-drm-rockchip-support-gamma-control-on-RK3399.patch'
-        '0024-Bluetooth-btsdio-Do-not-bind-to-non-removable-BCM4345-and-BCM43455.patch'
-        '0001-arm64-dts-clockworkpi-a06-dts.patch'
-        '0002-mfd-axp20x-add-clockworkpi-a06-power-support.patch'
-        '0004-gpu-drm-panel-add-cwd686-driver.patch'
-        '0005-video-backlight-add-ocp8178-driver.patch'
-        '0006-fix-rockchip-mipi-dsi-display-init-timeouts.patch'
+        '0023-drm-rockchip-support-gamma-control-on-RK3399.patch' # From list: https://patchwork.kernel.org/project/linux-arm-kernel/cover/20211019215843.42718-1-sigmaris@gmail.com/
+        '0024-Bluetooth-btsdio-Do-not-bind-to-non-removable-BCM4345-and-BCM43455.patch' # Applied in linux-next
+        '0001-arm64-dts-clockworkpi-a06-dts.patch' # Potentially upstreamable, needs cleanup
+        '0002-mfd-axp20x-add-clockworkpi-a06-power-support.patch' # Looks potentially incorrect. Probably not upstreamable
+        '0004-gpu-drm-panel-add-cwd686-driver.patch' # Potentially upstreamable, needs cleanup
+        '0005-video-backlight-add-ocp8178-driver.patch' # Potentially upstreamable, needs cleanup
+        '0006-fix-rockchip-mipi-dsi-display-init-timeouts.patch' # Applied in linux-next
         'config'
-        'kernel.keyblock'
-        'kernel_data_key.vbprivk'
         'linux.preset'
         '60-linux.hook'
         '90-linux.hook')
@@ -43,104 +38,118 @@ md5sums=('e6680ce7c989a3efe58b51e3f3f0bf93'
          'f2577b39b1eda4a18b9111775843f83b'
          '3203d018422505068fc22b909df871aa'
          '873658be357da087e5bc4f8d3a1e9c8c'
-         '818e2ca23311946f87fae814ff6afc30'
-         '61c5ff73c136ed07a7aadbf58db3d96a'
-         '584777ae88bce2c5659960151b64c7d8'
-         '38e59d9919735bee0752faff1db00a4c'
-         '0a5f16bfec6ad982a2f6782724cca8ba'
+         'debc07879e11ea64ba405a126a50443b'
+         '86d4a35722b5410e3b29fc92dae15d4b'
+         'ce6c81ad1ad1f8b333fd6077d47abdaf'
          '3dc88030a8f2f5a5f97266d99b149f77')
 
 prepare() {
-  cd $_srcname
-
-  echo "Setting version..."
-  scripts/setlocalversion --save-scmversion
-  echo "-$pkgrel" > localversion.10-pkgrel
-  echo "${pkgbase#linux}" > localversion.20-pkgname
+  cd ${_srcname}
 
   # add upstream patch
-  echo "Applying Upstream patch"
   patch -Np1 -i "${srcdir}/patch-${pkgver}"
 
-#  # ALARM patches
-#  echo "Applying ALARM patches"
-#  patch -Np1 -i "${srcdir}/0001-net-smsc95xx-Allow-mac-address-to-be-set-as-a-parame.patch"
-#  patch -Np1 -i "${srcdir}/0002-arm64-dts-rockchip-disable-pwm0-on-rk3399-firefly.patch"
-
+  # ALARM patches
+  #patch -Np1 -i "${srcdir}/0001-net-smsc95xx-Allow-mac-address-to-be-set-as-a-parame.patch"             #All
+  
   # Manjaro ARM Patches
-  patch -Np1 -i "${srcdir}/0023-drm-rockchip-support-gamma-control-on-RK3399.patch"                         #RK3399
-  patch -Np1 -i "${srcdir}/0024-Bluetooth-btsdio-Do-not-bind-to-non-removable-BCM4345-and-BCM43455.patch"   #Bluetooth
-
-  # ClockworkPI DevTerm A06 patches   
-  patch -Np1 -i "${srcdir}/0001-arm64-dts-clockworkpi-a06-dts.patch"                    # DTS   
-  patch -Np1 -i "${srcdir}/0002-mfd-axp20x-add-clockworkpi-a06-power-support.patch"     # Battery/Charger   
-  patch -Np1 -i "${srcdir}/0004-gpu-drm-panel-add-cwd686-driver.patch"                  # LCD   
-  patch -Np1 -i "${srcdir}/0005-video-backlight-add-ocp8178-driver.patch"               # Backlight   
-  patch -Np1 -i "${srcdir}/0006-fix-rockchip-mipi-dsi-display-init-timeouts.patch"      # Fix display suspend/resume 
-
-#  # ClockworkPi DevTerm A06 patches
-#  echo "Applying ClockworkPi patches"
-#  echo "PATCH 1"
-#  patch -Np1 -i "${srcdir}/0001-kernel-a06-dts.patch"
-#  echo "PATCH 2"
-#  patch -Np1 -i "${srcdir}/0002-kernel-power.patch"
-#  echo "PATCH 3"
-#  patch -Np1 -i "${srcdir}/0003-kernel-audio.patch"
-#  echo "PATCH 4"
-#  patch -Np1 -i "${srcdir}/0004-kernel-panel.patch"
-#  echo "PATCH 5"
-#  patch -Np1 -i "${srcdir}/0005-kernel-backlight.patch"
-#  echo "PATCH 6"
-#  patch -Np1 -i "${srcdir}/0006-kernel-suspend.patch"
+  patch -Np1 -i "${srcdir}/0023-drm-rockchip-support-gamma-control-on-RK3399.patch"                     #RK3399
+  patch -Np1 -i "${srcdir}/0024-Bluetooth-btsdio-Do-not-bind-to-non-removable-BCM4345-and-BCM43455.patch" #Bluetooth
+  
+  # ClockworkPI DevTerm A06 patches
+  patch -Np1 -i "${srcdir}/0001-arm64-dts-clockworkpi-a06-dts.patch"                    # DTS
+  patch -Np1 -i "${srcdir}/0002-mfd-axp20x-add-clockworkpi-a06-power-support.patch"     # Battery/Charger
+  patch -Np1 -i "${srcdir}/0004-gpu-drm-panel-add-cwd686-driver.patch"                  # LCD
+  patch -Np1 -i "${srcdir}/0005-video-backlight-add-ocp8178-driver.patch"               # Backlight
+  patch -Np1 -i "${srcdir}/0006-fix-rockchip-mipi-dsi-display-init-timeouts.patch"      # Fix display suspend/resume
 
   cat "${srcdir}/config" > ./.config
+
+  # add pkgrel to extraversion
+  sed -ri "s|^(EXTRAVERSION =)(.*)|\1 \2-${pkgrel}|" Makefile
+
+  # don't run depmod on 'make install'. We'll do this ourselves in packaging
+  sed -i '2iexit 0' scripts/depmod.sh
 }
 
 build() {
   cd ${_srcname}
 
-  # resolve new configurations
-  make olddefconfig
-
   # get kernel version
   make prepare
-  make -s kernelrelease > version
+
+  # load configuration
+  # Configure the kernel. Replace the line below with one of your choice.
+  #make menuconfig # CLI menu for configuration
+  #make nconfig # new CLI menu for configuration
+  #make xconfig # X-based configuration
+  #make oldconfig # using old config from previous kernel version
+  # ... or manually edit .config
+  make olddeconfig
+
+  # Copy back our configuration (use with new kernel version)
+  #cp ./.config /var/tmp/${pkgbase}.config
+
+  ####################
+  # stop here
+  # this is useful to configure the kernel
+  #msg "Stopping build"
+  #return 1
+  ####################
+
+  #yes "" | make config
 
   # build!
   unset LDFLAGS
-  make ${MAKEFLAGS} Image Image.gz modules
+  make ${MAKEFLAGS} Image modules
   # Generate device tree blobs with symbols to support applying device tree overlays in U-Boot
   make ${MAKEFLAGS} DTC_FLAGS="-@" dtbs
 }
 
 _package() {
   pkgdesc="The Linux Kernel and modules - ${_desc}"
-  depends=('coreutils' 'linux-firmware' 'kmod' 'mkinitcpio>=0.7')
+  depends=('coreutils' 'linux-firmware' 'kmod' 'initramfs')
   optdepends=('crda: to set the correct wireless channels of your country')
-  provides=("linux=${pkgver}" "WIREGUARD-MODULE")
-  replaces=('linux-armv8')
-  conflicts=('linux')
+  provides=('kernel26' "linux=${pkgver}")
+  conflicts=('kernel26' 'linux', 'linux-armv8' 'linux-aarch64')
+  replaces=()
   backup=("etc/mkinitcpio.d/${pkgbase}.preset")
   install=${pkgname}.install
 
-  cd $_srcname
-  local kernver="$(<version)"
-  local modulesdir="$pkgdir/usr/lib/modules/$kernver"
+  cd ${_srcname}
 
-  echo "Installing boot image and dtbs..."
-  install -Dm644 arch/arm64/boot/Image{,.gz} -t "${pkgdir}/boot"
+  KARCH=arm64
+
+  # get kernel version
+  _kernver="$(make kernelrelease)"
+  _basekernel=${_kernver%%-*}
+  _basekernel=${_basekernel%.*}
+
+  mkdir -p "${pkgdir}"/{boot,usr/lib/modules}
+  make INSTALL_MOD_PATH="${pkgdir}/usr" modules_install
   make INSTALL_DTBS_PATH="${pkgdir}/boot/dtbs" dtbs_install
+  cp arch/$KARCH/boot/Image "${pkgdir}/boot"
 
-  echo "Installing modules..."
-  make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 modules_install
+  # make room for external modules
+  local _extramodules="extramodules-${_basekernel}${_kernelname}"
+  ln -s "../${_extramodules}" "${pkgdir}/usr/lib/modules/${_kernver}/extramodules"
+
+  # add real version for building modules and running depmod from hook
+  echo "${_kernver}" |
+    install -Dm644 /dev/stdin "${pkgdir}/usr/lib/modules/${_extramodules}/version"
 
   # remove build and source links
-  rm "$modulesdir"/{source,build}
+  rm "${pkgdir}"/usr/lib/modules/${_kernver}/{source,build}
+
+  # now we call depmod...
+  depmod -b "${pkgdir}/usr" -F System.map "${_kernver}"
+
 
   # sed expression for following substitutions
   local _subst="
     s|%PKGBASE%|${pkgbase}|g
-    s|%KERNVER%|${kernver}|g
+    s|%KERNVER%|${_kernver}|g
+    s|%EXTRAMODULES%|${_extramodules}|g
   "
 
   # install mkinitcpio preset file
@@ -157,80 +166,75 @@ _package() {
 _package-headers() {
   pkgdesc="Header files and scripts for building modules for linux kernel - ${_desc}"
   provides=("linux-headers=${pkgver}")
-  conflicts=('linux-headers')
+  conflicts=('linux-headers', 'linux-aarch64-headers')
+  replaces=()
 
-  cd $_srcname
-  local builddir="$pkgdir/usr/lib/modules/$(<version)/build"
+  cd ${_srcname}
+  local _builddir="${pkgdir}/usr/lib/modules/${_kernver}/build"
 
-  echo "Installing build files..."
-  install -Dt "$builddir" -m644 .config Makefile Module.symvers System.map \
-    localversion.* version vmlinux
-  install -Dt "$builddir/kernel" -m644 kernel/Makefile
-  install -Dt "$builddir/arch/arm64" -m644 arch/arm64/Makefile
-  cp -t "$builddir" -a scripts
+  install -Dt "${_builddir}" -m644 Makefile .config Module.symvers
+  install -Dt "${_builddir}/kernel" -m644 kernel/Makefile
+
+  mkdir "${_builddir}/.tmp_versions"
+
+  cp -t "${_builddir}" -a include scripts
+
+  install -Dt "${_builddir}/arch/${KARCH}" -m644 arch/${KARCH}/Makefile
+  install -Dt "${_builddir}/arch/${KARCH}/kernel" -m644 arch/${KARCH}/kernel/asm-offsets.s
+  install -Dt "${_builddir}" -m644 vmlinux 
+
+  cp -t "${_builddir}/arch/${KARCH}" -a arch/${KARCH}/include
+  mkdir -p "${_builddir}/arch/arm"
+  cp -t "${_builddir}/arch/arm" -a arch/arm/include
+
+  install -Dt "${_builddir}/drivers/md" -m644 drivers/md/*.h
+  install -Dt "${_builddir}/net/mac80211" -m644 net/mac80211/*.h
+
+  # http://bugs.archlinux.org/task/13146
+  install -Dt "${_builddir}/drivers/media/i2c" -m644 drivers/media/i2c/msp3400-driver.h
+
+  # http://bugs.archlinux.org/task/20402
+  install -Dt "${_builddir}/drivers/media/usb/dvb-usb" -m644 drivers/media/usb/dvb-usb/*.h
+  install -Dt "${_builddir}/drivers/media/dvb-frontends" -m644 drivers/media/dvb-frontends/*.h
+  install -Dt "${_builddir}/drivers/media/tuners" -m644 drivers/media/tuners/*.h
 
   # add xfs and shmem for aufs building
-  mkdir -p "$builddir"/{fs/xfs,mm}
+  mkdir -p "${_builddir}"/{fs/xfs,mm}
 
-  echo "Installing headers..."
-  cp -t "$builddir" -a include
-  cp -t "$builddir/arch/arm64" -a arch/arm64/include
-  install -Dt "$builddir/arch/arm64/kernel" -m644 arch/arm64/kernel/asm-offsets.s
-  mkdir -p "$builddir/arch/arm"
-  cp -t "$builddir/arch/arm" -a arch/arm/include
+  # copy in Kconfig files
+  find . -name Kconfig\* -exec install -Dm644 {} "${_builddir}/{}" \;
 
-  install -Dt "$builddir/drivers/md" -m644 drivers/md/*.h
-  install -Dt "$builddir/net/mac80211" -m644 net/mac80211/*.h
-
-  # https://bugs.archlinux.org/task/13146
-  install -Dt "$builddir/drivers/media/i2c" -m644 drivers/media/i2c/msp3400-driver.h
-
-  # https://bugs.archlinux.org/task/20402
-  install -Dt "$builddir/drivers/media/usb/dvb-usb" -m644 drivers/media/usb/dvb-usb/*.h
-  install -Dt "$builddir/drivers/media/dvb-frontends" -m644 drivers/media/dvb-frontends/*.h
-  install -Dt "$builddir/drivers/media/tuners" -m644 drivers/media/tuners/*.h
-
-  # https://bugs.archlinux.org/task/71392
-  install -Dt "$builddir/drivers/iio/common/hid-sensors" -m644 drivers/iio/common/hid-sensors/*.h
-
-  echo "Installing KConfig files..."
-  find . -name 'Kconfig*' -exec install -Dm644 {} "$builddir/{}" \;
-
-  echo "Removing unneeded architectures..."
-  local arch
-  for arch in "$builddir"/arch/*/; do
-    [[ $arch = */arm64/ || $arch == */arm/ ]] && continue
-    echo "Removing $(basename "$arch")"
-    rm -r "$arch"
+  # remove unneeded architectures
+  local _arch
+  for _arch in "${_builddir}"/arch/*/; do
+    [[ ${_arch} == */${KARCH}/ || ${_arch} == */arm/ ]] && continue
+    rm -r "${_arch}"
   done
 
-  echo "Removing documentation..."
-  rm -r "$builddir/Documentation"
+  # remove documentation files
+  rm -r "${_builddir}/Documentation"
 
-  echo "Removing broken symlinks..."
-  find -L "$builddir" -type l -printf 'Removing %P\n' -delete
+  # remove now broken symlinks
+  find -L "${_builddir}" -type l -printf 'Removing %P\n' -delete
 
-  echo "Removing loose objects..."
-  find "$builddir" -type f -name '*.o' -printf 'Removing %P\n' -delete
-
-  echo "Stripping build tools..."
+  # strip scripts directory
   local file
   while read -rd '' file; do
     case "$(file -bi "$file")" in
       application/x-sharedlib\;*)      # Libraries (.so)
-        strip -v $STRIP_SHARED "$file" ;;
+        strip $STRIP_SHARED "$file" ;;
       application/x-archive\;*)        # Libraries (.a)
-        strip -v $STRIP_STATIC "$file" ;;
+        strip $STRIP_STATIC "$file" ;;
       application/x-executable\;*)     # Binaries
-        strip -v $STRIP_BINARIES "$file" ;;
+        strip $STRIP_BINARIES "$file" ;;
       application/x-pie-executable\;*) # Relocatable binaries
-        strip -v $STRIP_SHARED "$file" ;;
+        strip $STRIP_SHARED "$file" ;;
     esac
-  done < <(find "$builddir" -type f -perm -u+x ! -name vmlinux -print0)
-
-  echo "Adding symlink..."
-  mkdir -p "$pkgdir/usr/src"
-  ln -sr "$builddir" "$pkgdir/usr/src/$pkgbase"
+  done < <(find "${_builddir}" -type f -perm -u+x ! -name vmlinux -print0 2>/dev/null)
+  strip $STRIP_STATIC "${_builddir}/vmlinux"
+  
+  # remove unwanted files
+  find ${_builddir} -name '*.orig' -delete
 }
 
 pkgname=("${pkgbase}" "${pkgbase}-headers")

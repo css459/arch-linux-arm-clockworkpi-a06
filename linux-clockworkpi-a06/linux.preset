@@ -3,7 +3,7 @@
 ALL_config="/etc/mkinitcpio.conf"
 ALL_kver="%KERNVER%"
 
-PRESETS=('default' 'fallback')
+PRESETS=('default')
 
 HOOKS=(base udev autodetect modconf block filesystems keyboard fsck)
 MODULES=(rtc_rk808 rockchipdrm panel_cwd686 ocp8178_bl)
@@ -11,7 +11,3 @@ MODULES=(rtc_rk808 rockchipdrm panel_cwd686 ocp8178_bl)
 #default_config="/etc/mkinitcpio.conf"
 default_image="/boot/initramfs-linux.img"
 #default_options=""
-
-#fallback_config="/etc/mkinitcpio.conf"
-fallback_image="/boot/initramfs-linux-fallback.img"
-fallback_options="-S autodetect"
