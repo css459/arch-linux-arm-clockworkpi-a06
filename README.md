@@ -89,7 +89,7 @@ For this section, **all commands will be run inside the chroot**.
 1. Install some useful tools
 
 ```
-# pacman -S git vim wget ranger sudo
+# pacman -S base-devel git vim wget ranger sudo iwd man
 ```
 
 2. Set the Locale by editing `/etc/locale.gen` and uncommenting your required locales.
@@ -97,6 +97,12 @@ For this section, **all commands will be run inside the chroot**.
 
 ```
 # locale-gen
+```
+
+4. Set `fstab`
+
+```
+# echo 'LABEL=ROOT_ARCH	/	ext4	defaults	0	0' >> /etc/fstab
 ```
 
 ### Switch to the `alarm` user
