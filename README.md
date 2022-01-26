@@ -369,7 +369,12 @@ The SD card is now ready to be booted by the DevTerm! Good luck!
 
 ## Next Steps
 
-You will want to set up Wi-Fi on first boot. You can do so by using [iwctl](https://wiki.archlinux.org/title/Iwd#iwctl).
+You will want to set up Wi-Fi on first boot. You can do so by using [iwctl](https://wiki.archlinux.org/title/Iwd#iwctl). If you have a simple network,
+you can use the following from the wiki:
+
+```
+$ iwctl --passphrase <passphrase> station wlan0 connect <SSID>
+```
 
 Check out the [post-install suggestions](https://wiki.archlinux.org/title/General_recommendations) from Arch Linux for
 further configuration.
