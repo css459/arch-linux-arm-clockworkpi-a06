@@ -39,7 +39,7 @@ We will start by creating an ARM chroot environment to build our root filesystem
 1. Install the required packages
 
 ```
-$ yay -S binfmt-qemu-static and qemu-user-static base-devel arch-install-scripts
+$ yay -S base-devel binfmt-qemu-static qemu-user-static arch-install-scripts
 
 # systemctl restart systemd-binfmt.service
 ```
