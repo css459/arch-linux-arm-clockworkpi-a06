@@ -102,13 +102,13 @@ For this section, **all commands will be run inside the chroot**.
 1. Install some useful tools
 
 ```
-# pacman -S base-devel git vim wget ranger sudo iwd man
+# pacman -S base-devel git vim wget ranger sudo man networkmanager
 ```
 
-2. Enable `iwd` and `dhcpcd` for networking on first boot
+2. Enable `networkmanager` and `dhcpcd` for networking on first boot
 
 ```
-# systemctl enable iwd dhcpcd
+# systemctl enable NetworkManager dhcpcd
 ```
 
 3. Set the Locale by editing `/etc/locale.gen` and uncommenting your required locales.
@@ -369,12 +369,8 @@ The SD card is now ready to be booted by the DevTerm! Good luck!
 
 ## Next Steps
 
-You will want to set up Wi-Fi on first boot. You can do so by using [iwctl](https://wiki.archlinux.org/title/Iwd#iwctl). If you have a simple network,
-you can use the following from the wiki:
-
-```
-$ iwctl --passphrase <passphrase> station wlan0 connect <SSID>
-```
+You will want to set up Wi-Fi on first boot. You can do so by
+using [NetworkManager](https://wiki.archlinux.org/title/NetworkManager).
 
 Check out the [post-install suggestions](https://wiki.archlinux.org/title/General_recommendations) from Arch Linux for
 further configuration.
