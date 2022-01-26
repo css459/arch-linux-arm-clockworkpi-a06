@@ -10,10 +10,12 @@ url="https://github.com/clockworkpi/DevTerm/blob/main/Code/A06/devterm-a06-gearb
 license=('LGPLv2')
 depends=()
 groups=('clockworkpi-a06')
-source=("https://github.com/armbian/firmware/blob/master/brcm/brcmfmac43456-sdio.txt"
-        "https://github.com/armbian/firmware/blob/master/brcm/brcmfmac43456-sdio.bin")
-md5sums=('0ae3783a126f1ff99587b88b32e34462'
-         'edd812f576a0e76be0810e466c0b6880')
+source=("https://github.com/armbian/firmware/raw/master/brcm/brcmfmac43456-sdio.txt"
+        "https://github.com/armbian/firmware/raw/master/brcm/brcmfmac43456-sdio.bin"
+        "https://github.com/armbian/firmware/raw/master/brcm/BCM4345C5.hcd")
+md5sums=('046a0d584bab0d2f774ba9f722a175f9'
+         'f77e38b143174bae5f91be2bd27a7d3f'
+         'fc394331d03baa5847e2b5de94ffbc9b')
 
 package() {
     install -Dm755 "brcmfmac43456-sdio.txt" "$pkgdir/usr/lib/firmware/brcm/brcmfmac43456-sdio.txt"
@@ -21,4 +23,6 @@ package() {
 
     install -Dm755 "brcmfmac43456-sdio.bin" "$pkgdir/usr/lib/firmware/brcm/brcmfmac43456-sdio.clockwork,devterm-a06.bin"
     install -Dm755 "brcmfmac43456-sdio.txt" "$pkgdir/usr/lib/firmware/brcm/brcmfmac43456-sdio.clockwork,devterm-a06.txt"
+
+    install -Dm755 "BCM4345C5.hcd" "$pkgdir/usr/lib/firmware/brcm/BCM4345C5.hcd"
 }
