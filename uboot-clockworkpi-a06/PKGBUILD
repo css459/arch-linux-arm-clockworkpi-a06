@@ -17,6 +17,7 @@ makedepends=('git' 'dtc' 'bc')
 provides=('uboot')
 conflicts=('uboot')
 install=${pkgname}.install
+groups=('clockworkpi-a06')
 source=("https://ftp.denx.de/pub/u-boot/u-boot-${pkgver/rc/-rc}.tar.bz2"
         "https://git.trustedfirmware.org/TF-A/trusted-firmware-a.git/snapshot/trusted-firmware-a-$_tfaver.tar.gz"
         "0001-uboot-clockworkpi-a06.patch")

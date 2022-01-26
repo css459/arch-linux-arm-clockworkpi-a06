@@ -10,6 +10,7 @@ url="https://github.com/clockworkpi/DevTerm/tree/main/Code/devterm_fan_daemon_cp
 license=('LGPLv2')
 depends=('python>=3')
 install='fan-daemon-clockwork-a06.install'
+groups=('clockworkpi-a06')
 source=("https://raw.githubusercontent.com/clockworkpi/DevTerm/main/Code/devterm_fan_daemon_cpi_a06/temp_fan_daemon_a06.py"
 	"https://raw.githubusercontent.com/clockworkpi/DevTerm/main/Code/devterm_fan_daemon_cpi_a06/etc/systemd/system/devterm-fan-temp-daemon-a06.service")
 md5sums=('a6ce80633b2a1f20e1941ec45bd57185'
