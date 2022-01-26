@@ -105,39 +105,54 @@ For this section, **all commands will be run inside the chroot**.
 # pacman -S base-devel git vim wget ranger sudo iwd man
 ```
 
-2. Set the Locale by editing `/etc/locale.gen` and uncommenting your required locales.
-3. Run
+2. Enable `iwd` for networking on first boot
+
+```
+# systemctl enable iwd
+```
+
+3. Set the Locale by editing `/etc/locale.gen` and uncommenting your required locales.
+4. Run
 
 ```
 # locale-gen
 ```
 
-4. Set `fstab`
+5. Set `fstab`
 
 ```
 # echo 'LABEL=ROOT_ARCH    /    ext4    defaults    0    0' >> /etc/fstab
 ```
 
-5. Set the time using `timedatectl`. To list supported timezones: `timedatectl list-timezones`
+6. Set the time using `timedatectl`. To list supported timezones: `timedatectl list-timezones`
 
 ```
 # timedatectl set-timezone "US/Eastern"
 # timedatectl set-ntp true
 ```
 
-6. Set the system clock
+7. Set the system clock
 
 ```
-# `hwclock --systohc`
+# hwclock --systohc
 ```
 
-7. Set the hostname to whatever you like
+8. Set the hostname to whatever you like
 
 ```
 # echo 'devterm' > /etc/hostname
 ```
 
-8. Assign the root password
+9. Add the following to `/etc/X11/xorg.conf.d/10-monitor.conf`
+
+```
+Section "Monitor"
+        Identifier "DSI-1"
+        Option "Rotate" "right"
+EndSection
+```
+
+10. Assign the root password
 
 ```
 # passwd
@@ -336,8 +351,8 @@ in place of theirs.
 
 ```
 # cd /mnt/boot
-# dd if=/boot/idbloader.img of=/dev/sdX seek=64 conv=notrunc,fsync
-# dd if=/boot/u-boot.itb of=/dev/sdX seek=16384 conv=notrunc,fsync
+# dd if=idbloader.img of=/dev/sdX seek=64 conv=notrunc,fsync
+# dd if=u-boot.itb of=/dev/sdX seek=16384 conv=notrunc,fsync
 ```
 
 8. Unmount and eject the SD card
@@ -351,6 +366,24 @@ in place of theirs.
 ## Done!
 
 The SD card is now ready to be booted by the DevTerm! Good luck!
+
+## Next Steps
+
+You will want to set up Wi-Fi on first boot. You can do so by using [iwctl](https://wiki.archlinux.org/title/Iwd#iwctl).
+
+Check out the [post-install suggestions](https://wiki.archlinux.org/title/General_recommendations) from Arch Linux for
+further configuration.
+
+## Troubleshooting
+
+If you run into issues where you see no screen output or the DevTerm will not boot, please check the debugging output
+via UART:
+
+1. Connect a micro-USB cable to the UART port on the *inside* of your DevTerm, near where the printer ribbon cable is
+   connected
+2. Connect the other end to your Linux system, you should now see a new device: `/dev/ttyUSB0`
+3. Monitor the connection with `sudo stty -F /dev/ttyUSB0 1500000 && sudo cat /dev/ttyUSB0`
+4. Power on your DevTerm and monitor for errors
 
 # Acknowledgements
 
