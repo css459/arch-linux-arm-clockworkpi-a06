@@ -1,0 +1,24 @@
+# ClockworkPi DevTerm A06 Networking Fix for BRCM43456
+# Maintainer: Cole Smith <cole.s.smith1@gmail.com>
+
+pkgname=networking-clockwork-a06
+pkgver=1.0
+pkgrel=1
+pkgdesc="ClockworkPi DevTerm A06 Networking"
+arch=('any')
+url="https://github.com/clockworkpi/DevTerm/blob/main/Code/A06/devterm-a06-gearbox"
+license=('LGPLv2')
+depends=()
+groups=('clockworkpi-a06')
+source=("https://github.com/armbian/firmware/blob/master/brcm/brcmfmac43456-sdio.txt"
+        "https://github.com/armbian/firmware/blob/master/brcm/brcmfmac43456-sdio.bin")
+md5sums=('0ae3783a126f1ff99587b88b32e34462'
+         'edd812f576a0e76be0810e466c0b6880')
+
+package() {
+    install -Dm755 "brcmfmac43456-sdio.txt" "$pkgdir/usr/lib/firmware/brcm/brcmfmac43456-sdio.txt"
+    install -Dm755 "brcmfmac43456-sdio.bin" "$pkgdir/usr/lib/firmware/brcm/brcmfmac43456-sdio.bin"
+
+    install -Dm755 "brcmfmac43456-sdio.bin" "$pkgdir/usr/lib/firmware/brcm/brcmfmac43456-sdio.clockwork,devterm-a06.bin"
+    install -Dm755 "brcmfmac43456-sdio.txt" "$pkgdir/usr/lib/firmware/brcm/brcmfmac43456-sdio.clockwork,devterm-a06.txt"
+}

@@ -105,10 +105,10 @@ For this section, **all commands will be run inside the chroot**.
 # pacman -S base-devel git vim wget ranger sudo iwd man
 ```
 
-2. Enable `iwd` for networking on first boot
+2. Enable `iwd` and `dhcpcd` for networking on first boot
 
 ```
-# systemctl enable iwd
+# systemctl enable iwd dhcpcd
 ```
 
 3. Set the Locale by editing `/etc/locale.gen` and uncommenting your required locales.
