@@ -102,7 +102,7 @@ For this section, **all commands will be run inside the chroot**.
 4. Set `fstab`
 
 ```
-# echo 'LABEL=ROOT_ARCH	/	ext4	defaults	0	0' >> /etc/fstab
+# echo 'LABEL=ROOT_ARCH    /    ext4    defaults    0    0' >> /etc/fstab
 ```
 
 ### Switch to the `alarm` user
