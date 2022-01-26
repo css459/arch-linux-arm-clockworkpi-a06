@@ -1,7 +1,0 @@
-/src/
-/pkg/
-/rkbin/
-/u-boot-*/
-*.tar.gz
-*.tar.bz2
-*.tar.zst
