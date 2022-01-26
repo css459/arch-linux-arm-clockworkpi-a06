@@ -311,7 +311,10 @@ The SD card is now ready to be booted by the DevTerm! Good luck!
 # Acknowledgements
 
 Very special thanks to **Max Fierke (@maxfierke)** from the Manjaro team for their help in debugging and kernel patching. 
-The Linux kernel port in this repository uses their carefully designed patches, in place of the ones from ClockworkPi.
+The Linux kernel and u-boot ports in this repository uses their carefully designed patches, and modified PKGBUILDs. This
+Arch Linux port would not be possible without their hard work, and I make no claims or credit to it. 
 
-For more information about their kernel for the A06, [see here](https://gitlab.manjaro.org/manjaro-arm/packages/core/linux-clockworkpi-a06).
+[Manjaro DevTerm A06 Linux Kernel](https://gitlab.manjaro.org/manjaro-arm/packages/core/linux-clockworkpi-a06)
+
+[Manjaro DevTerm A06 U-Boot](https://gitlab.manjaro.org/manjaro-arm/packages/core/uboot-clockworkpi-a06)
 
