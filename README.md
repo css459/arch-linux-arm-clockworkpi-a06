@@ -13,6 +13,11 @@ We will create a root file system based on the **rock64** architecture (rk3328).
 bootloader and kernel with the patches provided by ClockworkPi. Technically, the DevTerm A06's architecture is based on
 the rk3399.
 
+## Quickstart
+
+Pre-built root filesystem(s) are provided in the **Releases** tab. Skip to the **Prepare the SD Card** section if using
+a pre-built image. Replace `arch-linux-clockworkpi-a06-root-fs.tar.xz` with your downloaded file name in the guide steps.
+
 # Setup
 
 This guide **assumes you are already using Arch Linux**. Some package names or procedures may differ depending on your
@@ -292,8 +297,8 @@ in place of theirs.
 
 ```
 # cd /mnt/boot
-# dd if=rksd_loader.img of=/dev/sdX seek=64 conv=notrunc
-# dd if=u-boot.itb of=/dev/sdX seek=16384 conv=notrunc
+# dd if=/boot/idbloader.img of=/dev/sdX seek=64 conv=notrunc,fsync
+# dd if=/boot/u-boot.itb of=/dev/sdX seek=16384 conv=notrunc,fsync
 ```
 
 8. Unmount and eject the SD card
