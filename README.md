@@ -67,27 +67,31 @@ $ wget http://os.archlinuxarm.org/os/ArchLinuxARM-aarch64-latest.tar.gz
 4. Create the mount point and extract the files as root (not via sudo)
 
 ```
-$ mkdir root 
 $ sudo su
+# mkdir root 
 
 # bsdtar -xpf ArchLinuxARM-aarch64-latest.tar.gz -C root
 # mount --bind root root
 ```
 
-7. Chroot into the newly created environment
+**NOTE**: It's very important that this `root` folder is owned by **root**. Otherwise, you will
+get `unsafe path transition`
+errors in the final build.
+
+5. Chroot into the newly created environment
 
 ```
 # arch-chroot root
 ```
 
-8. Inside the chroot, populate and init the pacman keyring
+6. Inside the chroot, populate and init the pacman keyring
 
 ```
 # pacman-key --init
 # pacman-key --populate archlinuxarm
 ```
 
-9. Finally, update the packages
+7. Finally, update the packages
 
 ```
 # pacman -Syu
@@ -388,9 +392,10 @@ via UART:
 
 # Acknowledgements
 
-Very special thanks to **Max Fierke (@maxfierke)** from the Manjaro team for their help in debugging and kernel
-patching. The Linux kernel and u-boot ports in this repository uses their carefully designed patches, and modified
-PKGBUILDs. This Arch Linux port would not be possible without their hard work, and I make no claims or credit to it.
+Very special thanks to **Max Fierke (@maxfierke)** from the CPI Discord, and the Manjaro team for their help in
+debugging and kernel patching. The Linux kernel and u-boot ports in this repository uses their carefully designed
+patches, and modified PKGBUILDs. This Arch Linux port would not be possible without their hard work, and I make no
+claims or credit to it.
 
 [Manjaro DevTerm A06 Linux Kernel](https://gitlab.manjaro.org/manjaro-arm/packages/core/linux-clockworkpi-a06)
 
