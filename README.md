@@ -22,7 +22,7 @@ steps.
 **NOTE:** Please note the following defaults for the release filesystem:
 
 * Root password: `root`
-* Timezone: `UTC`
+* Timezone: `US/Eastern`
 * Locale: `en_US UTF8`
 * Hostname: `devterm`
 
