@@ -135,6 +135,10 @@ For this section, **all commands will be run inside the chroot**.
 # timedatectl set-ntp true
 ```
 
+**NOTE**: This may affect the timezone of your system outside the chroot, if so, you may reset
+your host system timezone after finishing the root tarball. 
+
+
 7. Set the system clock
 
 ```
