@@ -341,6 +341,11 @@ in place of theirs.
 # mkfs.ext4 -L ROOT_ARCH -O ^has_journal /dev/sdX1
 ```
 
+**NOTE:** Disabling the journal is helpful for simple flash devices
+like SD Cards to reduce successive writes. In rare cases, your filesystem
+may become corrupted, which may arise as a **boot loop**. Running 
+`fsck -y /dev/sdX1` on an external system can fix this issue.  
+
 5. Mount the filesystem
 
 ```
