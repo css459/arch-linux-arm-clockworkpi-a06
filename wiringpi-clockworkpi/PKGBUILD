@@ -1,0 +1,32 @@
+# Maintainer: lonewsk <lwsk -at- nodot.fr>
+pkgname=wiringpi-clockworkpi
+pkgver=109.11d3247
+pkgrel=1
+pkgdesc="Arduino wiring-like library written in C for RaspberryPi."
+url="http://wiringpi.com/"
+arch=('aarch64')
+license=('LGPL3')
+makedepends=('git')
+conflicts=('wiringpi')
+source=('git://github.com/clockworkpi/DevTerm')
+md5sums=('SKIP')
+
+pkgver() {
+	cd $srcdir/DevTerm/Code/devterm_wiringpi_cpi
+	echo $(git rev-list --count HEAD).$(git rev-parse --short HEAD)
+}
+prepare() {
+	cd $srcdir/DevTerm/Code/devterm_wiringpi_cpi/wiringPi	
+	sed -i 's/-fPIC/-fPIC -fcommon /g' Makefile
+}
+package() {
+	msg2 "Creating skeleton dirs..."
+	mkdir -p "${pkgdir}"/{usr/lib,usr/bin}
+	cd $srcdir/DevTerm/Code/devterm_wiringpi_cpi
+	sed -i 's|$sudo make uninstall||g' build
+	sed -i "s| make| make DESTDIR=\"${pkgdir}/usr\" PREFIX=\"\" LDCONFIG=\"\"|g" build
+	msg2 "Running wiringPi build/package script..."
+	export WIRINGPI_SUDO=''
+	./build
+	install -Dm644 COPYING.LESSER "${pkgdir}/usr/share/licenses/${pkgname}/COPYING.LESSER"
+}
