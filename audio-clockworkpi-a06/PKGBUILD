@@ -1,0 +1,24 @@
+# Maintainer: lonewsk <lwsk -at- nodot.fr>
+
+pkgname=audio-clockworkpi-a06
+pkgver=1.0
+pkgrel=1
+pkgdesc="ClockworkPi DevTerm A06 Gearbox"
+arch=('aarch64')
+license=('LGPLv2')
+depends=('alsa-lib')
+groups=('clockworkpi-a06')
+source=("git://github.com/maxfierke/clockworkpi-a06-post-install")
+md5sums=('SKIP')
+
+
+package() {
+    # Install alsa-ucm-conf profile for DevTerm A06
+    mkdir -p "${pkgdir}/usr/share/alsa/ucm2/Rockchip/es8388"
+    install -Dm644 "${srcdir}/clockworkpi-a06-post-install/es8388.conf" "${pkgdir}/usr/share/alsa/ucm2/Rockchip/es8388/es8388.conf"
+    install -Dm644 "${srcdir}/clockworkpi-a06-post-install/HiFi.conf" "${pkgdir}/usr/share/alsa/ucm2/Rockchip/es8388/HiFi.conf"
+
+    mkdir -p "${pkgdir}"/usr/share/alsa/ucm2/conf.d/simple-card
+    ln -sfv /usr/share/alsa/ucm2/Rockchip/es8388/es8388.conf \
+            "${pkgdir}"/usr/share/alsa/ucm2/conf.d/simple-card/rockchip,es8388-codec.conf
+}
