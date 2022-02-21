@@ -8,7 +8,7 @@ arch=('aarch64')
 license=('LGPLv2')
 depends=('alsa-lib')
 groups=('clockworkpi-a06')
-source=("git://github.com/maxfierke/clockworkpi-a06-post-install")
+source=("git://gitlab.manjaro.org/manjaro-arm/packages/community/clockworkpi-a06-post-install.git")
 md5sums=('SKIP')
 
 

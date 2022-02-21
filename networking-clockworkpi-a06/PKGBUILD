@@ -1,7 +1,7 @@
 # ClockworkPi DevTerm A06 Networking Fix for BRCM43456
 # Maintainer: Cole Smith <cole.s.smith1@gmail.com>
 
-pkgname=networking-clockwork-a06
+pkgname=networking-clockworkpi-a06
 pkgver=1.0
 pkgrel=1
 pkgdesc="ClockworkPi DevTerm A06 Networking"
