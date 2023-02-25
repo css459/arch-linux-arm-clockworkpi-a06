@@ -1,4 +1,4 @@
-# Arch Linux ARM for the ClockworkPi DevTerm A06
+# [UNMAINTAINED] Arch Linux ARM for the ClockworkPi DevTerm A06
 
 Author: Cole Smith
 
